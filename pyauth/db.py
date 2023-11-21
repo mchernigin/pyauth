@@ -1,8 +1,9 @@
+import logging
 from typing import List, Type
+
 from asyncpg.exceptions import UniqueViolationError
 from databases import Database
 from pydantic import BaseModel, TypeAdapter
-import logging
 
 logger = logging.getLogger("app")
 
@@ -32,7 +33,7 @@ class AbstractRepository:
         placeholders = ",".join(map(lambda x: f":{x}", keys))
         return columns, placeholders
 
-    async def add(self, entities: List[Entity], ignore_conflict=False):
+    async def add(self, entities: BaseModel | List[BaseModel], ignore_conflict=False):
         if not isinstance(entities, list):
             entities = [entities]
 

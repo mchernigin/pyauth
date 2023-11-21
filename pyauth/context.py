@@ -1,5 +1,6 @@
-from databases import Database
 from os import getenv
+
+from databases import Database
 
 from pyauth.db import PgRepository
 from pyauth.models import User
@@ -14,7 +15,6 @@ class Context:
         self.user_repo = PgRepository(self.pg, User)
 
     async def init_db(self) -> None:
-        print(self.pg.url)
         await self.pg.connect()
 
     async def dispose_db(self) -> None:
