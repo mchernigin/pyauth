@@ -1,0 +1,52 @@
+[project]
+name = "pyauth"
+version = "0.1.0"
+description = "Add your description here"
+authors = [{ name = "Michael Chernigin", email = "michaelchernigin@gmail.com" }]
+dependencies = [
+    "fastapi>=0.104.1",
+    "pydantic>=2.4.2",
+    "pydantic-settings>=2.0.3",
+    "databases>=0.8.0",
+    "aiohttp>=3.8.6",
+    "asyncpg>=0.28.0",
+    "httpx>=0.25.1",
+    "uvicorn>=0.24.0.post1",
+    "asgi_correlation_id>=4.2.0",
+]
+readme = "README.md"
+requires-python = ">= 3.8"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+  "black>=23.10.1",
+  "isort>=5.12.0",
+  "pre-commit>=3.5.0",
+  "flake8>=5.0.4",
+  "ipython>=8.12.3",
+  "pg_activity[psycopg]>=3.4.2",
+  "pytest>=7.4.3",
+  "click>=8.1.7",
+]
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.black]
+line-length = 79
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.pylsp-mypy]
+enabled = false
+live_mode = false
+dmypy = true
+strict = false
