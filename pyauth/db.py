@@ -9,7 +9,8 @@ logger = logging.getLogger("app")
 
 
 class Entity(BaseModel):
-    pass
+    _table_name: str
+    _pk: str
 
 
 class DatabaseCredentials(BaseModel):
@@ -37,7 +38,7 @@ class AbstractRepository:
         if not isinstance(entities, list):
             entities = [entities]
 
-        if entities == []:
+        if not entities:
             return
 
         dumps = list(map(lambda x: x.model_dump(), entities))
@@ -84,7 +85,7 @@ class AbstractRepository:
 class PgRepository(AbstractRepository):
     async def add_or_update(self, entity: Entity, fields: List[str]):
         try:
-            await self.add(self.entity)
+            await self.add(entity)
         except UniqueViolationError:
             await self.update(entity, fields)
 

@@ -1,11 +1,9 @@
 from typing import ClassVar
-from uuid import UUID
 
-from pydantic import BaseModel
+from pyauth.db import Entity
 
 
-class User(BaseModel):
-    id: UUID | None
+class User(Entity):
     email: str
     password: bytes
 
