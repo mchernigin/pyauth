@@ -1,5 +1,5 @@
 import logging
-from typing import List, Type
+from typing import List, Type, Optional, ClassVar
 
 from asyncpg.exceptions import UniqueViolationError
 from databases import Database
@@ -9,8 +9,8 @@ logger = logging.getLogger("app")
 
 
 class Entity(BaseModel):
-    _table_name: str
-    _pk: str
+    _table_name: ClassVar[str]
+    _pk: ClassVar[str]
 
 
 class DatabaseCredentials(BaseModel):
@@ -66,7 +66,7 @@ class AbstractRepository:
             query=query, values={k: dump[k] for k in fields} | {pk: dump[pk]}
         )
 
-    async def get(self, field=None, value=None) -> List[Entity]:
+    async def get_many(self, field=None, value=None) -> List[Entity]:
         query = f"SELECT * FROM {self._table_name}"
         if field is not None:
             query += f" WHERE {field} = :{field}"
@@ -80,6 +80,16 @@ class AbstractRepository:
         )
 
         return list(mapped)
+
+    async def get_one(self, field, value) -> Optional[Entity]:
+        query = f"SELECT * FROM {self._table_name}"
+        query += f" WHERE {field} = :{field}"
+        row = await self._db.fetch_one(query=query, values={field: value})
+
+        if not row:
+            return None
+
+        return TypeAdapter(self._entity).validate_python(dict(row._mapping))
 
 
 class PgRepository(AbstractRepository):
