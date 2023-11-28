@@ -17,11 +17,6 @@ def verify_password(password: bytes, known_hash: bytes) -> bool:
     return bcrypt.checkpw(password, known_hash)
 
 
-class TokenSchema(BaseModel):
-    access_token: str
-    refresh_token: str
-
-
 class TokenPayload(BaseModel):
     sub: str
     exp: int

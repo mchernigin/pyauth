@@ -1,22 +1,26 @@
-from typing import Annotated
 from datetime import datetime
 
-from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends, HTTPException, status
+from fastapi import HTTPException, status
 from jose import jwt, JWTError
 from pydantic import ValidationError
+from starlette.requests import Request
 
 from pyauth.utils import TokenPayload
 from pyauth.models import User
 from pyauth.context import ctx
 
-reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/auth", scheme_name="JWT")
 
-
-async def get_current_user(token: Annotated[str, Depends(reuseable_oauth)]) -> User:
+async def get_current_user(request: Request) -> User:
     try:
+        access_token = request.cookies.get("Access-Token")
+        if access_token is None:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Token not found",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
         payload = jwt.decode(
-            token=token,
+            token=access_token,
             key=ctx.jwt_secret_key,
             algorithms=[ctx.hash_algorithm],
         )
